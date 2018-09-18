@@ -1,7 +1,7 @@
 # -*- coding:utf-8 -*-
 import codecs
 import re
-
+import os
 import jieba.analyse
 import matplotlib.pyplot as plt
 import requests
@@ -19,8 +19,10 @@ headers = {
 
 
 def clean_html(raw_html):
-    pattern = re.compile(r'<.*?>|转发微博|//:|Repost|，|？|。|、|分享图片|回复@.*?:|//@.*')
-    text = re.sub(pattern, '', raw_html)
+    pattern1 = re.compile(r'<.*?>|&gt;|转发微博|网页链接|Repost|(分享|查看|刚刚).*(图片|专辑|单曲|歌曲|照片|视频)')
+    pattern2 = re.compile(r'/@[^\s]+/|/+@[^\n]+')
+    pattern3 = re.compile(r'[(（].*@[^\s]+[）)]|[？?]|、|[！!]')
+    text = re.sub(pattern3, '', re.sub(pattern2, '', re.sub(pattern1, '', raw_html)))
     return text
 
 
@@ -113,5 +115,6 @@ def generate_image():
 
 
 if __name__ == '__main__':
-    # fetch_data("1192515960", "1076031192515960")
+    if not os.path.isfile("weibo1.txt"):
+        fetch_data("1192515960", "1076031192515960")
     generate_image()
